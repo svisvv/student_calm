@@ -1,0 +1,180 @@
+/* Общий стиль main и панелей — тот же */
+main {
+    display: flex;
+    height: calc(100vh - 80px);
+    background-color: #e6faf3;
+    padding: 40px;
+    gap: 40px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.rec-section, .ex-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.rec-section::-webkit-scrollbar,
+.ex-section::-webkit-scrollbar {
+    width: 6px;
+}
+.rec-section::-webkit-scrollbar-thumb,
+.ex-section::-webkit-scrollbar-thumb {
+    background-color: #b2e2d1;
+    border-radius: 3px;
+}
+
+.rec-section, .ex-section {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.rec-section::-webkit-scrollbar,
+.ex-section::-webkit-scrollbar {
+    display: none;
+}
+
+/* Хедер */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background-color: #e6faf3;
+}
+
+.logo img {
+    width: 36px;
+}
+
+/* Навигация */
+.nav-menu {
+    display: flex;
+    gap: 12px;
+}
+
+.nav-menu a {
+    padding: 6px 18px;
+    border-radius: 20px;
+    border: 1px solid #209176;
+    color: #209176;
+    text-decoration: none;
+    font-weight: 500;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-menu a:hover {
+    background-color: #d0f1e7;
+}
+
+.nav-menu a.active {
+    background-color: #d0f1e7;
+    pointer-events: none;
+}
+
+/* Заголовки */
+h2 {
+    font-size: 22px;
+    color: #209176;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #209176;
+    margin-bottom: 8px;
+}
+
+.counter {
+    font-size: 16px;
+    font-weight: bold;
+    color: #444;
+    background-color: #d0f1e7;
+    padding: 8px 16px;
+    border-radius: 20px;
+    align-self: flex-start;
+}
+
+/* Карточки рекомендаций и упражнений */
+.rec-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.rec-card {
+    background-color: white;
+    padding: 20px 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    position: relative;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rec-card.viewed {
+    background-color: #dff3eb; /* Чуть темнее фон для просмотренных */
+}
+
+.rec-card h4 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #209176;
+}
+
+.rec-card p {
+    color: #444;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.meta span {
+    font-size: 14px;
+    color: #777;
+}
+
+.btn {
+    padding: 6px 12px;
+    background-color: #209176;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background-color: #197a63;
+}
+
+.btn:disabled {
+    background-color: #b2e2d1;
+    color: #fff;
+    cursor: default;
+}
+
+/* Стрелка */
+.rec-card .arrow {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    color: #209176;
+    cursor: pointer;
+}

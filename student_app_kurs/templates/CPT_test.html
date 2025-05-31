@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>CPT Тест</title>
+    <link rel="stylesheet" href="{% static 'app/test_list.css' %}" />
+    <style>
+        .centered-block {
+            margin: 60px auto;
+            max-width: 600px;
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 12px;
+            border: none;
+            background: #209176;
+            color: white;
+            cursor: pointer;
+        }
+        .hidden { display: none; }
+        .stimulus {
+            font-size: 48px;
+            margin: 40px 0;
+            font-weight: bold;
+            color: #209176;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="logo-title">
+        <img src="{% static 'app/logo.png' %}" alt="Логотип" class="logo" />
+        <span class="question">CPT Тест</span>
+    </div>
+    <div class="nav-buttons">
+        <a class="nav-button" href="{% url 'test_list' %}">Завершить досрочно</a>
+    </div>
+</div>
+
+<div class="centered-block" id="instruction-block">
+    <h2>Инструкция</h2>
+    <p>Перед вами будет последовательность символов. Ваша задача — нажать пробел как можно быстрее, когда вы видите символ <strong>X</strong>. Не нажимайте пробел на других символах.</p>
+    <button class="btn" onclick="startTest()">Начать тестирование</button>
+</div>
+
+<div class="centered-block hidden" id="test-block">
+    <div class="stimulus" id="stimulus">–</div>
+    <div>Нажмите пробел, если видите букву <strong>X</strong></div>
+</div>
+
+<div class="centered-block hidden" id="result-block">
+    <div class="finish-message">Тест завершен! Спасибо за участие.</div>
+    <a class="btn" href="{% url 'spilberger_test' %}">Следующий тест</a>
+    <a class="btn inactive">Рекомендация</a>
+</div>
+
+<script>
+    const sequence = generateSequence(30);  // длина теста
+    let index = 0;
+    let correctHits = 0;
+    let falseAlarms = 0;
+    let misses = 0;
+    let startTime;
+    let stimulusTimeout;
+
+    function generateSequence(length) {
+        // Создаем случайную последовательность из букв, с 30% символов X
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        let seq = [];
+        for(let i = 0; i < length; i++) {
+            if (Math.random() < 0.3) {
+                seq.push('X');
+            } else {
+                let letter;
+                do {
+                    letter = letters[Math.floor(Math.random() * letters.length)];
+                } while(letter === 'X');
+                seq.push(letter);
+            }
+        }
+        return seq;
+    }
+
+    function startTest() {
+        document.getElementById('instruction-block').classList.add('hidden');
+        document.getElementById('test-block').classList.remove('hidden');
+        index = 0;
+        correctHits = 0;
+        falseAlarms = 0;
+        misses = 0;
+        startTime = Date.now();
+        showStimulus();
+        document.addEventListener('keydown', handleKey);
+    }
+
+    function showStimulus() {
+        if(index >= sequence.length) {
+            finishTest();
+            return;
+        }
+        const stimElem = document.getElementById('stimulus');
+        stimElem.textContent = sequence[index];
+        // Устанавливаем таймаут на 1.5 секунды - время показа символа
+        stimulusTimeout = setTimeout(() => {
+            // Если не нажали пробел при X — считаем промах
+            if(sequence[index] === 'X') {
+                misses++;
+            }
+            index++;
+            showStimulus();
+        }, 1500);
+    }
+
+    function handleKey(e) {
+        if(e.code === 'Space' && !document.getElementById('result-block').classList.contains('hidden')) {
+            e.preventDefault();
+            return; // тест завершен, игнорируем пробел
+        }
+        if(e.code === 'Space' && !document.getElementById('instruction-block').classList.contains('hidden')) {
+            e.preventDefault();
+            return; // инструкция, тест не начат
+        }
+        if(e.code === 'Space') {
+            e.preventDefault();
+            if(index >= sequence.length) return;
+            if(sequence[index] === 'X') {
+                correctHits++;
+            } else {
+                falseAlarms++;
+            }
+            clearTimeout(stimulusTimeout);
+            index++;
+            showStimulus();
+        }
+    }
+
+    function finishTest() {
+        document.removeEventListener('keydown', handleKey);
+        document.getElementById('test-block').classList.add('hidden');
+        document.getElementById('result-block').classList.remove('hidden');
+
+        const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
+
+        // Отправляем результат на сервер
+        fetch("{% url 'save_cpt_result' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                correct_hits: correctHits,
+                false_alarms: falseAlarms,
+                misses: misses,
+                time_taken: timeTaken
+            })
+        });
+    }
+</script>
+</body>
+</html>

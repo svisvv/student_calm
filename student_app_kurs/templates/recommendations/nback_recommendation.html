@@ -1,0 +1,50 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Результат — nBack</title>
+    <link rel="stylesheet" href="{% static 'app/test_list.css' %}">
+</head>
+<body>
+<div class="header">
+    <div class="logo-title">
+        <img src="{% static 'app/logo.png' %}" alt="Логотип" class="logo">
+        <span class="question">По результатам теста "n-back"</span>
+    </div>
+    <div class="nav-buttons">
+        <a class="nav-button" href="{% url 'recommendations' %}">К рекомендациям</a>
+    </div>
+</div>
+
+<div class="main">
+    <div class="left-panel" style="flex: 1; margin: auto;">
+        <div class="test-card" style="text-align: center;">
+            <div class="test-title" style="font-size: 22px;">Ваш результат</div>
+            <div>
+                <a> Средняя точность ответа: 48%</a>
+            </div>
+            <div class="test-description">
+                Ваш результат в тесте n-back указывает на <strong>недостаточный уровень развития рабочей памяти и концентрации внимания</strong>.
+                Это может проявляться в трудности удерживать в уме и одновременно обрабатывать новую информацию, особенно при выполнении сложных умственных задач или в условиях стресса.
+            </div>
+        </div>
+
+        <div class="test-card" style="margin-top: 24px;">
+            <div class="test-title">Рекомендация</div>
+            <div class="test-description">
+
+                <ul>
+                    <li>Работайте в спокойной обстановке.</li>
+                    <li>Придумывайте ассоциации, создавайте образы или истории для запоминания.</li>
+                    <li>Чередуйте умственную нагрузку с физической активностью.</li>
+                    <li>Делайте перерывы при длительной работе.</li>
+                </ul>
+                Повторите тест через 1 неделю, чтобы отследить динамику.
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

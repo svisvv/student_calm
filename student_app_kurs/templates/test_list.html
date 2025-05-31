@@ -1,0 +1,85 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тесты - ПК</title>
+    <link rel="stylesheet" href="{% static 'app/test_list.css' %}">
+</head>
+<body>
+<div class="header">
+    <div class="logo-title">
+        <img src="{% static 'app/logo.png' %}" alt="Логотип" class="logo">
+        <span class="question">Как прошла Ваша неделя?</span>
+    </div>
+    <div class="nav-buttons">
+        <a class="nav-button inactive">Тесты</a>
+        <a class="nav-button" href="{% url 'recommendations' %}">Рекомендации</a>
+        <a class="nav-button" href="{% url 'profile' %}">Профиль</a>
+    </div>
+</div>
+
+<div class="main">
+    <div class="left-panel">
+
+            <div class="suggested-header">Обязательные тестирования</div><!-- <div class="score">0/6</div> -->
+
+
+        <div class="test-section">
+            <div class="test-card">
+                <div class="test-title">Таблицы Шульте</div>
+                <div class="test-description">Развивает периферическое зрение, концентрацию и распределение внимания.</div>
+                <a href="{% url 'schulte_test' %}" class="arrow">➥</a>
+            </div>
+            <div class="test-card">
+                <div class="test-title">Тест Струпа</div>
+                <div class="test-description">Оценивает скорость обработки информации и устойчивость внимания при наличии интерференции.</div>
+                <a href="{% url 'strup_test' %}" class="arrow"></a>
+
+            </div>
+            <div class="test-card">
+                <div class="test-title">n-back</div>
+                <div class="test-description">Тренирует рабочую память, улучшает концентрацию и когнитивный контроль.</div>
+                <a href="{% url 'nback_test' %}" class="arrow"></a>
+
+            </div>
+            <div class="test-card">
+                <div class="test-title">CPT</div>
+                <div class="test-description">Компьютеризированный тест на устойчивость внимания и импульсивность.</div>
+                <a href="{% url 'cpt_test' %}" class="arrow"></a>
+
+            </div>
+            <div class="test-card">
+                <div class="test-title">Шкала Спилбергера-Ханина</div>
+                <div class="test-description">Оценивает уровень ситуативной и личностной тревожности.</div>
+                <a href="{% url 'spilberger_test' %}" class="arrow"></a>
+
+            </div>
+            <div class="test-card">
+                <div class="test-title">BDI-II</div>
+                <div class="test-description">Шкала Бека для оценки уровня депрессии. Помогает выявить эмоциональное состояние.</div>
+                <a href="{% url 'bdi_test' %}" class="arrow"></a>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="suggested-header">Вам может быть интересно пройти</div>
+        <div class="suggested-card">
+            <div class="test-title">Опросник на уровень скорости чтения и понимания текста</div>
+            <div class="test-description">Оценивает скорость чтения и степень понимания прочитанного материала.</div>
+        </div>
+        <div class="suggested-card">
+            <div class="test-title">Опросник Мак-Кроски на коммуникативную компетенцию</div>
+            <div class="test-description">Оценивает уровень коммуникативных навыков и комфорт взаимодействия.</div>
+        </div>
+        <div class="suggested-card">
+            <div class="test-title">Тест на оценку уровня ораторских навыков</div>
+            <div class="test-description">Анализирует умение структурировать мысли и выступать публично.</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

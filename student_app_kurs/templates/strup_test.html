@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест Струпа</title>
+    <link rel="stylesheet" href="{% static 'app/test_list.css' %}">
+    <style>
+        .centered-block {
+            margin: 60px auto;
+            max-width: 600px;
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .word {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 20px;
+        }
+        .options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .option {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            background-color: #e6faf3;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .option:hover {
+            background-color: #d0f1e7;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 12px;
+            border: none;
+            background: #209176;
+            color: white;
+            cursor: pointer;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="logo-title">
+        <img src="{% static 'app/logo.png' %}" alt="Логотип" class="logo">
+        <span class="question">Тест Струпа</span>
+    </div>
+    <div class="nav-buttons">
+        <a class="nav-button" href="{% url 'test_list' %}">Завершить досрочно</a>
+    </div>
+</div>
+
+<div class="centered-block" id="instruction-block">
+    <h2>Инструкция</h2>
+    <p><strong>Вам будет показано слово, окрашенное в определённый цвет.</strong><br>
+    Ваша задача — выбрать <strong>КНОПКУ</strong> с названием <u>цвета текста</u>, <em>игнорируя текст самого слова</em>.</p>
+
+    <p>Примеры:</p>
+    <ul>
+        <li>Если вы видите <span style="color: green; font-weight: bold;">Красный</span>, нажмите кнопку <strong>«Зелёный»</strong>.</li>
+        <li>Если вы видите <span style="color: red; font-weight: bold;">Зелёный</span>, нажмите кнопку <strong>«Красный»</strong>.</li>
+    </ul>
+
+    <p>Старайтесь отвечать <strong>быстро</strong> и <strong>точно</strong>.</p>
+
+    <button class="btn" onclick="startTest()">Начать тестирование</button>
+</div>
+
+
+<div class="centered-block hidden" id="test-block">
+    <div id="word-container" class="word"></div>
+    <div class="options" id="options-container"></div>
+</div>
+
+<div class="centered-block hidden" id="result-block">
+    <div class="finish-message">Тест завершён! Можете перейти к следующему тесту или просмотреть рекомендации.</div>
+    <a class="btn" href="{% url 'nback_test' %}">Следующий тест</a>
+    <a class="btn">Рекомендация</a>
+</div>
+
+<script>
+    const words = [
+        { text: 'Красный', color: 'green' },
+        { text: 'Синий', color: 'yellow' },
+        { text: 'Зелёный', color: 'red' },
+        { text: 'Жёлтый', color: 'blue' },
+        { text: 'Синий', color: 'green' },
+        { text: 'Красный', color: 'blue' },
+        { text: 'Зелёный', color: 'yellow' },
+    ];
+
+    const colorMap = {
+        'red': 'Красный',
+        'blue': 'Синий',
+        'green': 'Зелёный',
+        'yellow': 'Жёлтый'
+    };
+
+    let currentIndex = 0;
+    let correctAnswers = 0;
+    let reactionTimes = [];
+    let currentStartTime;
+
+    function shuffleArray(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    function startTest() {
+        document.getElementById('instruction-block').classList.add('hidden');
+        document.getElementById('test-block').classList.remove('hidden');
+        currentIndex = 0;
+        correctAnswers = 0;
+        reactionTimes = [];
+        showNextWord();
+    }
+
+    function showNextWord() {
+        if (currentIndex >= words.length) {
+            finishTest();
+            return;
+        }
+
+        const wordData = words[currentIndex];
+        const wordContainer = document.getElementById('word-container');
+        const optionsContainer = document.getElementById('options-container');
+
+        wordContainer.textContent = wordData.text;
+        wordContainer.style.color = wordData.color;
+        optionsContainer.innerHTML = '';
+        currentStartTime = performance.now();
+
+        const shuffledOptions = shuffleArray(Object.entries(colorMap));
+
+        shuffledOptions.forEach(([color, label]) => {
+            const btn = document.createElement('button');
+            btn.className = 'option';
+            btn.textContent = label;
+            btn.onclick = () => handleAnswer(color, wordData.color);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function handleAnswer(selectedColor, correctColor) {
+        const timeTaken = performance.now() - currentStartTime;
+        reactionTimes.push(timeTaken.toFixed(2));
+
+        if (selectedColor === correctColor) {
+            correctAnswers++;
+        }
+
+        currentIndex++;
+        setTimeout(showNextWord, 300); // небольшая задержка
+    }
+
+    function finishTest() {
+        const avgTime = (
+            reactionTimes.reduce((a, b) => a + parseFloat(b), 0) / reactionTimes.length
+        ).toFixed(2);
+
+        fetch("{% url 'save_strup_result' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                average_time: avgTime,
+                correct: correctAnswers,
+                total: words.length
+            })
+        }).then(() => {
+            document.getElementById('test-block').classList.add('hidden');
+            document.getElementById('result-block').classList.remove('hidden');
+        });
+    }
+</script>
+
+</body>
+</html>

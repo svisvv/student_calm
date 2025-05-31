@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Анкета</title>
+    <link rel="stylesheet" href="{% static 'app/style.css' %}">
+</head>
+<body>
+<div class="container info-page">
+    <div class="logo logo-top">
+        <img src="{% static 'app/logo.png' %}" alt="Логотип">
+    </div>
+
+    <h1>Расскажи нам кое-что о себе</h1>
+    <form method="post" class="login-form">
+        {% csrf_token %}
+
+        <div class="card">
+            <label>
+                {{ form.is_freshman }}
+                <span>{{ form.is_freshman.label }}</span>
+            </label>
+            <label>
+                {{ form.is_nonresident }}
+                <span>{{ form.is_nonresident.label }}</span>
+            </label>
+            <label>
+                {{ form.is_international }}
+                <span>{{ form.is_international.label }}</span>
+            </label>
+        </div>
+
+        <div class="card">
+            <label>
+                {{ form.is_employed }}
+                <span>{{ form.is_employed.label }}</span>
+            </label>
+            <div id="work-intensity" class="toggle-container" style="{% if not form.is_employed.value %}display: none;{% endif %}">
+                {{ form.work_intensity.label_tag }}
+                {{ form.work_intensity }}
+            </div>
+        </div>
+
+        <button type="submit" class="continue-btn">Продолжить</button>
+    </form>
+</div>
+
+<script>
+    const employedCheckbox = document.getElementById('id_is_employed');
+    const workBlock = document.getElementById('work-intensity');
+
+    if (employedCheckbox) {
+        employedCheckbox.addEventListener('change', function () {
+            workBlock.style.display = this.checked ? 'flex' : 'none';
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="{% static 'app/test_list.css' %}">
+    <link rel="stylesheet" href="{% static 'app/profile.css' %}">
+</head>
+<body>
+<div class="header">
+    <div class="logo-title">
+        <img src="{% static 'app/logo.png' %}" alt="Логотип" class="logo">
+        <span class="question">Вы – яркая личность!</span>
+    </div>
+    <div class="nav-buttons">
+        <a class="nav-button" href="{% url 'test_list' %}">Тесты</a>
+        <a class="nav-button" href="{% url 'recommendations' %}">Рекомендации</a>
+        <a class="nav-button inactive">Профиль</a>
+    </div>
+</div>
+
+<div class="profile-main">
+    <!-- Левая панель -->
+    <div class="profile-left">
+        <div class="profile-photo-container">
+    <div class="photo-wrapper">
+    {% if user.profile.photo %}
+        <img src="{{ user.profile.photo.url }}" alt="Фото профиля" class="profile-photo">
+    {% else %}
+        <div class="no-photo">Фото отсутствует</div>
+    {% endif %}
+
+    <!-- Форма для загрузки фото -->
+    <form method="post" enctype="multipart/form-data" action="{% url 'upload_photo' %}">
+        {% csrf_token %}
+        <input type="file" name="photo" accept="image/*" id="photo-input" style="display: none;">
+        <button type="button" class="change-photo-button" onclick="document.getElementById('photo-input').click();">Сменить фото</button>
+        <button type="submit" id="submit-photo" style="display: none;"></button>
+    </form>
+</div>
+
+</div>
+
+        <div class="profile-status">
+            <p>Первокурсник: {% if user.profile.is_freshman %}Да{% else %}Нет{% endif %}</p>
+            <p>Иногородний: {% if user.profile.is_nonresident %}Да{% else %}Нет{% endif %}</p>
+            <p>Иностранный: {% if user.profile.is_international %}Да{% else %}Нет{% endif %}</p>
+            <p>Работает: {% if user.profile.is_employed %}Да ({{ user.profile.work_intensity }}){% else %}Нет{% endif %}</p>
+            <button class="inactive-button">Редактировать анкету</button>
+        </div>
+    </div>
+
+    <!-- Правая панель -->
+    <div class="profile-right">
+        <div class="profile-info">
+    <p><strong>Имя:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <div class="button-row">
+        <button class="inactive-button">Сменить пароль</button>
+        <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="inactive-button">Выход</button>
+</form>
+
+    </div>
+</div>
+
+        <div class="profile-stat">
+            <img src="{% static 'app/graph.jpg' %}" alt="График" class="stat-graph">
+            <a class="stat-button">Статистика по тестированиям</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const photoInput = document.getElementById('photo-input');
+    const submitBtn = document.getElementById('submit-photo');
+
+    photoInput.addEventListener('change', function () {
+        if (this.files.length > 0) {
+            submitBtn.click();
+        }
+    });
+</script>
+
+</body>
+</html>

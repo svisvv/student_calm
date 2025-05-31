@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Тест Шкала Спилбергера-Ханина</title>
+    <link rel="stylesheet" href="{% static 'app/test_list.css' %}" />
+    <style>
+        .centered-block {
+            margin: 60px auto;
+            max-width: 600px;
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 12px;
+            border: none;
+            background: #209176;
+            color: white;
+            cursor: pointer;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="logo-title">
+        <img src="{% static 'app/logo.png' %}" alt="Логотип" class="logo" />
+        <span class="question">Тест Шкала Спилбергера-Ханина</span>
+    </div>
+    <div class="nav-buttons">
+        <a class="nav-button" href="{% url 'test_list' %}">Завершить досрочно</a>
+    </div>
+</div>
+
+<div class="centered-block" id="instruction-block">
+    <h2>Инструкция</h2>
+    <p>В этом тесте вам нужно будет ответить на серию вопросов, оценивающих уровень тревожности. Пожалуйста, выбирайте варианты ответов честно.</p>
+    <button class="btn" onclick="startTest()">Начать тестирование</button>
+</div>
+
+<div class="centered-block hidden" id="test-block">
+    <div id="question-text" style="font-size: 20px; margin-bottom: 30px;"></div>
+    <div id="answers-container" style="display: flex; flex-direction: column; gap: 15px;">
+        <!-- Варианты ответов будут добавляться сюда -->
+    </div>
+</div>
+
+<div class="centered-block hidden" id="result-block">
+    <h3>Тест завершён! Спасибо за участие.</h3>
+    <div>Ваш результат: <span id="score"></span></div>
+    <a class="btn" href="{% url 'bdi_test' %}">Следующий тест</a>
+    <a class="btn inactive">Рекомендация</a>
+</div>
+
+<script>
+    const questions = [
+        {
+            text: "Я чувствую напряжение, тревогу, беспокойство или страх.",
+            answers: [
+                {text: "Нет", value: 1},
+                {text: "Немного", value: 2},
+                {text: "Средне", value: 3},
+                {text: "Сильно", value: 4}
+            ]
+        },
+        {
+            text: "Мне трудно расслабиться.",
+            answers: [
+                {text: "Нет", value: 1},
+                {text: "Немного", value: 2},
+                {text: "Средне", value: 3},
+                {text: "Сильно", value: 4}
+            ]
+        },
+        // Добавь остальные вопросы по тесту, если хочешь
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function startTest() {
+        document.getElementById('instruction-block').classList.add('hidden');
+        document.getElementById('test-block').classList.remove('hidden');
+        currentQuestion = 0;
+        score = 0;
+        showQuestion();
+    }
+
+    function showQuestion() {
+        if (currentQuestion >= questions.length) {
+            finishTest();
+            return;
+        }
+        const question = questions[currentQuestion];
+        document.getElementById('question-text').textContent = question.text;
+
+        const answersContainer = document.getElementById('answers-container');
+        answersContainer.innerHTML = '';
+
+        question.answers.forEach(answer => {
+            const btn = document.createElement('button');
+            btn.textContent = answer.text;
+            btn.className = 'btn';
+            btn.onclick = () => {
+                score += answer.value;
+                currentQuestion++;
+                showQuestion();
+            };
+            answersContainer.appendChild(btn);
+        });
+    }
+
+    function finishTest() {
+        document.getElementById('test-block').classList.add('hidden');
+        document.getElementById('result-block').classList.remove('hidden');
+        document.getElementById('score').textContent = score;
+
+        // Отправка результата на сервер
+        fetch("{% url 'save_spilberger_result' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ score: score })
+        });
+    }
+</script>
+</body>
+</html>

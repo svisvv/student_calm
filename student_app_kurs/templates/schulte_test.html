@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Таблицы Шульте</title>
+    <link rel="stylesheet" href="{% static 'app/test_list.css' %}">
+    <style>
+        .centered-block {
+            margin: 60px auto;
+            max-width: 600px;
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            grid-gap: 12px;
+            justify-content: center;
+            margin: 40px auto;
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            background-color: #e6faf3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .hidden { display: none; }
+        .finish-message { font-size: 18px; margin-top: 20px; }
+        .btn { padding: 10px 20px; margin: 10px; border-radius: 12px; border: none; background: #209176; color: white; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="logo-title">
+        <img src="{% static 'app/logo.png' %}" alt="Логотип" class="logo">
+        <span class="question">Таблицы Шульте</span>
+    </div>
+    <div class="nav-buttons">
+        <a class="nav-button" href="{% url 'test_list' %}">Завершить досрочно</a>
+    </div>
+</div>
+
+<div class="centered-block" id="instruction-block">
+    <h2>Инструкция</h2>
+    <p>Перед вами будет таблица с числами от 1 до 25. Ваша задача — как можно быстрее находить и кликать по числам в порядке возрастания.</p>
+    <button class="btn" onclick="startTest()">Начать тестирование</button>
+</div>
+
+<div class="centered-block hidden" id="test-block">
+    <div class="grid" id="schulte-grid"></div>
+</div>
+
+<div class="centered-block hidden" id="result-block">
+    <div class="finish-message">Отлично, тест пройден! Теперь вы можете перейти к следующему тесту или посмотреть рекомендацию, приуроченную к вашим результатам.</div>
+    <a class="btn" href="{% url 'strup_test' %}">Следующий тест</a>
+    <a class="btn">Рекомендация</a>
+</div>
+
+<script>
+    let current = 1;
+    let startTime;
+
+    function startTest() {
+        document.getElementById('instruction-block').classList.add('hidden');
+        document.getElementById('test-block').classList.remove('hidden');
+
+        const grid = document.getElementById('schulte-grid');
+        const numbers = Array.from({length: 25}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+        grid.innerHTML = "";
+
+        numbers.forEach(num => {
+            const div = document.createElement('div');
+            div.className = 'cell';
+            div.textContent = num;
+            div.onclick = () => {
+                if (parseInt(div.textContent) === current) {
+                    div.style.backgroundColor = '#d0f1e7';
+                    current++;
+                    if (current > 25) {
+                        finishTest();
+                    }
+                }
+            };
+            grid.appendChild(div);
+        });
+
+        startTime = Date.now();
+    }
+
+    function finishTest() {
+        const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
+
+        fetch("{% url 'save_schulte_result' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ time_taken: timeTaken })
+        }).then(() => {
+            document.getElementById('test-block').classList.add('hidden');
+            document.getElementById('result-block').classList.remove('hidden');
+        });
+    }
+</script>
+</body>
+</html>

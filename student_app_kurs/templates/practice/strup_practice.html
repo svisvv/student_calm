@@ -1,0 +1,50 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Результат — Тест Струпа</title>
+    <link rel="stylesheet" href="{% static 'app/test_list.css' %}">
+</head>
+<body>
+<div class="header">
+    <div class="logo-title">
+        <img src="{% static 'app/logo.png' %}" alt="Логотип" class="logo">
+        <span class="question">По результатам "Теста Струпа" </span>
+    </div>
+    <div class="nav-buttons">
+        <a class="nav-button" href="{% url 'recommendations' %}">К рекомендациям</a>
+    </div>
+</div>
+
+<div class="main">
+    <div class="left-panel" style="flex: 1; margin: auto;">
+        <div class="test-card" style="text-align: center;">
+            <div class="test-title" style="font-size: 22px;">Ваш результат</div>
+            <div>
+                <a> Среднее время поиска: 28.4 секунды</a>
+            </div>
+            <div class="test-description">
+                Ваш результат свидетельствует о <strong>среднем уровне развития внимания и концентрации</strong>.
+                Вы справились с заданием в допустимые сроки, однако наблюдаются незначительные колебания темпа, что может указывать на утомляемость или внешние отвлекающие факторы.
+            </div>
+        </div>
+
+        <div class="test-card" style="margin-top: 24px;">
+            <div class="test-title">Рекомендация</div>
+            <div class="test-description">
+                Чтобы улучшить внимание и когнитивную устойчивость:
+                <ul>
+
+                    <li>Минимизируйте отвлекающие факторы при выполнении интеллектуальных задач (отключите уведомления, создайте тихое рабочее пространство).</li>
+                    <li>Используйте метод «помидора» (работа по 25 минут с короткими перерывами).</li>
+                    <li>Следите за режимом сна и физической активностью — это напрямую влияет на способность к концентрации.</li>
+                </ul>
+                Повторите тест через 1 неделю, чтобы отследить динамику.
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

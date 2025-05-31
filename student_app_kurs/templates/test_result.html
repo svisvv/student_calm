@@ -1,0 +1,29 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Рекомендации по результатам теста</h2>
+{% if recommendations %}
+    {% for recommendation in recommendations %}
+        <div>
+            <h3>{{ recommendation.text }}</h3>
+            {% if recommendation.resources %}
+                <p>Ресурсы: <a href="{{ recommendation.resources }}" target="_blank">{{ recommendation.resources }}</a></p>
+            {% endif %}
+            <form method="POST" action="{% url 'submit_recommendation' recommendation.id result.id %}">
+                {% csrf_token %}
+                <button type="submit">Выполнить</button>
+            </form>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>На основе вашего теста не было найдено рекомендаций.</p>
+{% endif %}
+
+</body>
+</html>

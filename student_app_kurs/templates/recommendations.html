@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Рекомендации</title>
+    <link rel="stylesheet" href="{% static 'app/test_list.css' %}">
+</head>
+<body>
+<div class="header">
+    <div class="logo-title">
+        <img src="{% static 'app/logo.png' %}" alt="Логотип" class="logo">
+        <span class="question">Немного заботы о себе</span>
+    </div>
+    <div class="nav-buttons">
+        <a class="nav-button" href="{% url 'test_list' %}">Тесты</a>
+        <a class="nav-button inactive">Рекомендации</a>
+        <a class="nav-button" href="{% url 'profile' %}">Профиль</a>
+    </div>
+</div>
+
+<div class="main">
+    <div class="left-panel">
+        <div class="suggested-header">Рекомендации этой недели</div>
+
+        <div class="test-card">
+            <div class="test-title">Таблицы Шульте</div>
+            <div class="test-description">Минимизируйте отвлекающие факторы при выполнении интеллектуальных задач...</div>
+            <a href="{% url 'schulte_recommendation' %}" class="arrow">→</a>
+        </div>
+
+        <div class="test-card viewed">
+            <div class="test-title">Тест Струпа</div>
+            <div class="test-description">Рекомендуется делать короткие перерывы для снижения когнитивной нагрузки...</div>
+            <a href="{% url 'strup_recommendation' %}" class="arrow">→</a>
+        </div>
+
+        <div class="test-card">
+            <div class="test-title">n-back</div>
+            <div class="test-description">Работайте в спокойной обстановке.
+Придумывайте ассоциации, создавайте образы...</div>
+            <a href="{% url 'nback_recommendation' %}" class="arrow">→</a>
+        </div>
+
+        <div class="test-card viewed">
+            <div class="test-title">CPT</div>
+            <div class="test-description">Рекомендуется выполнять CPT в одно и то же время для устойчивости результатов.</div>
+            <a href="{% url 'cpt_recommendation' %}" class="arrow">→</a>
+        </div>
+
+        <div class="test-card">
+            <div class="test-title">Шкала Спилбергера</div>
+            <div class="test-description">Практика дыхательных упражнений может снизить уровень тревожности.</div>
+            <a href="{% url 'spilberger_recommendation' %}" class="arrow">→</a>
+        </div>
+
+        <div class="test-card viewed">
+            <div class="test-title">BDI-II</div>
+            <div class="test-description">Ведение дневника эмоций помогает отслеживать и стабилизировать настроение.</div>
+            <a href="{% url 'bdi_recommendation' %}" class="arrow">→</a>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="suggested-header">Упражнения этой недели</div>
+
+        <div class="test-card">
+            <div class="test-title">Таблицы Шульте</div>
+            <div class="test-description">Найдите цифры от 1 до 25 за минимальное время. Повторите 3 раза.</div>
+            <a href="{% url 'schulte_practice' %}" class="arrow">→</a>
+        </div>
+
+        <div class="test-card viewed">
+            <div class="test-title">Тест Струпа</div>
+            <div class="test-description">Назовите цвет шрифта слов, игнорируя значение. Повторите 2 подхода.</div>
+            <a href="{% url 'strup_practice' %}" class="arrow">→</a>
+        </div>
+
+        <div class="test-card">
+            <div class="test-title">n-back</div>
+            <div class="test-description">Запустите n-back на уровне 2. Выполните 3 раунда по 2 минуты.</div>
+            <a href="{% url 'nback_practice' %}" class="arrow">→</a>
+        </div>
+
+        <div class="test-card viewed">
+            <div class="test-title">CPT</div>
+            <div class="test-description">Нажимайте пробел на букву "X". Сделайте 5 минутную тренировку.</div>
+            <a href="{% url 'cpt_practice' %}" class="arrow">→</a>
+        </div>
+
+        <div class="test-card">
+            <div class="test-title">Шкала Спилбергера</div>
+            <div class="test-description">Пройдите шкалу снова через день и сравните изменения.</div>
+            <a href="{% url 'spilberger_practice' %}" class="arrow">→</a>
+        </div>
+
+        <div class="test-card viewed">
+            <div class="test-title">BDI-II</div>
+            <div class="test-description">Пройдите короткий самооценочный опрос по уровню настроения.</div>
+            <a href="{% url 'bdi_practice' %}" class="arrow">→</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
